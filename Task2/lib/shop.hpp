@@ -13,8 +13,6 @@ struct NoPlaceInStaff : public exception {
 class Chain
 {
     static int count_chains;
-    int el_counts;
-    Chain* elements;
 protected:
     string name, addr, phone_number;
     int staff_size;
@@ -130,8 +128,6 @@ public:
     }
     
     map<string, int> get_list_of_goods() const { return this->goods_and_price; }
-    
-    friend ostream& operator<< (ostream &out, const Chain &chain);
 };
 
 
