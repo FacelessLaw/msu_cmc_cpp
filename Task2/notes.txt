@@ -1,2 +1,0 @@
-Run valgrind and remove memory leaks
-
