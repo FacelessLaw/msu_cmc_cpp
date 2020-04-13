@@ -1,0 +1,18 @@
+program {
+    int i, n;
+    real x, x0 = 1, fact = 1, e = 0;
+
+    write("Enter n: ");
+    read(n);
+
+    write("Enter x: ");
+    read(x);
+
+    for (i = 0; i < n; i = i + 1) {
+        e = e + x0 / fact;
+        x0 = x0 * x;
+        fact = fact * (i + 1);
+    }
+
+    write("e^", x, " = ", e, "\n");
+}
