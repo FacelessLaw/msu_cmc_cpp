@@ -252,6 +252,21 @@ Lexeme LexicalAnalyzer::readFromSlash() {
 		return Lexeme(LexemeType::delimeter, LEX_DIV);
 }
 
+Lexeme LexicalAnalyzer::readFromHash() {
+	string c = nextChar();
+
+	string comment;
+
+	c = nextChar();
+
+	while (c[0] && c[0] != '\n') {
+		comment += c; 
+		c = nextChar();
+	}
+
+	return Lexeme(LexemeType::comment, comment);
+}
+
 Lexeme LexicalAnalyzer::readDelimeter() {
 	string curr = currChar();
 	string next = nextChar();
@@ -291,6 +306,10 @@ Lexeme LexicalAnalyzer::getLexem() {
 
 	if (c == LEX_DIV)
 		return readFromSlash();
+	
+	if (c == LEX_HASH)
+		return readFromHash();
+		
 
 	if (isAsDelimeter(c[0]))
 		return readDelimeter();

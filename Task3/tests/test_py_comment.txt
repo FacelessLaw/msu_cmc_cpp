@@ -1,0 +1,9 @@
+program {
+    int a = 51, b = 6, c;
+    string x = "abc", y, z = "abcd";
+
+    y = "1234";
+    # y = "4321";
+
+    write (x + y + z);
+}

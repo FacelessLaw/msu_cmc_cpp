@@ -25,6 +25,7 @@ class LexicalAnalyzer {
 	Lexeme readFromDigit(); // получение лексемы, начиная с цифры
 	Lexeme readFromQuote(); // получение лексемы, начиная с кавычки
 	Lexeme readFromSlash(); // получение лексемы, начиная со слеша
+	Lexeme readFromHash(); // получение лексемы, начиная с хеша
 	Lexeme readDelimeter(); // получение лексемы-разделителя
 
 	void checkSource(std::string& source); // проверка исходного текста на некорректные символы

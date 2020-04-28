@@ -59,6 +59,7 @@ const std::string LEX_PLUS = "+";
 const std::string LEX_MINUS = "-";
 const std::string LEX_MULT = "*";
 const std::string LEX_DIV = "/";
+const std::string LEX_HASH = "#";
 
 const std::string LEX_ASSIGN = "=";
 const std::string LEX_EQUAL = "==";
@@ -89,7 +90,7 @@ const std::vector <std::string> delimeters = {
 	
 	LEX_LFIG_BRACKET, LEX_RFIG_BRACKET, LEX_LPARENTHESIS, LEX_RPARENTHESIS,
 	
-	LEX_PLUS, LEX_MINUS, LEX_DIV, LEX_MULT, 
+	LEX_PLUS, LEX_MINUS, LEX_DIV, LEX_HASH, LEX_MULT, 
 	
 	LEX_EQUAL, LEX_NEQUAL, LEX_LESS, LEX_GREATER, LEX_LESS_EQUAL, LEX_GREATER_EQUAL,
 };
