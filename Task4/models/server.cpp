@@ -2,23 +2,6 @@
 #include "../config.hpp"
 #include "../lib/utils.cpp"
 
-#include <iostream>
-#include <fstream>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <ctime> 
-#include <vector>
-#include <string.h>
-#include <signal.h>
-#include <sys/select.h>
-#include <sstream>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-
 using namespace std;
 
 Server::Server(string log_file)
