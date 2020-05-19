@@ -51,10 +51,8 @@ void resp_file(int client_fd, string error_file) // Формирование ф�
 	int len=0;
 	char buf[BUFF_SIZE];
 	int file_fd = open(error_file.c_str(), O_RDONLY);
-	while ((len = read(file_fd, &buf, BUFF_SIZE)))
-	{
-		if (send(client_fd, buf, len, 0)<0)
-		{
+	while ((len = read(file_fd, &buf, BUFF_SIZE))) {
+		if (send(client_fd, buf, len, 0)<0) {
 			close(file_fd);
 			perror(error_file.c_str());
 			shutdown(client_fd, SHUT_RDWR);
@@ -88,6 +86,7 @@ bool is_cgi_format_request(char* str) // Проверка запроса на ф
         if(params[i] == DELIMETER_QUESTION)
             is_found_key_word = true;
     }
+
     delete [] params;
     return is_found_key_word;
 }

@@ -62,17 +62,110 @@ void Server::close_connection(string message, int &client_fd)
 
 void Server::cgi_handler(int &client_fd, bool &is_home_page, char *path)
 {
-    cout << "NOT IMPLEMENTED";
+    chdir(PATH_FROM_MODELS_TO_BIN);
+    
+    int status;
+    string name = to_string(getpid()) + ".txt";
+    int file_fd = open(name.c_str(), O_WRONLY|O_CREAT|O_TRUNC, 0644);
+    dup2(file_fd, 1);
+    
+    if(!fork())
+    {
+        chdir(PATH_FROM_MODELS_TO_BIN);
+        string processName = get_fd_name(path);
+
+        int tmp_fd = open (processName.c_str(), O_RDONLY, 0644);
+        ifstream is(processName.c_str());
+        string s;
+        is >> s;
+        
+        while (s[0] == DELIMETER_HASH || s[0] == DELIMETER_EXCL_POINT || s[0] == ' ')
+            s.erase(s.begin());
+        
+        close(tmp_fd);
+        char *argv[] = { (char*)processName.c_str(), NULL };
+        
+        int offset = search_char(this->request + 5, DELIMETER_QUESTION);
+        
+        char **envp = new char*[7];
+        
+        envp[0]=new char[(int)strlen(HTML_SERVER_ADDR) + 1];
+        strcpy(envp[0],HTML_SERVER_ADDR);
+        envp[1]=new char[(int)strlen(HTML_CONTENT_TYPE) + 1];
+        strcpy(envp[1],HTML_CONTENT_TYPE);
+        envp[2]=new char[(int)strlen(HTML_SERVER_PROTOCOL) + 1];
+        strcpy(envp[2],HTML_SERVER_PROTOCOL);
+        envp[3]=new char[(int)strlen(HTML_SCRIPT_NAME) + 1 + strlen(this->request + 5)];
+        strcpy(envp[3],HTML_SCRIPT_NAME);
+        strcat(envp[3],this->request + 5);
+        envp[4]=new char[(int)strlen(HTML_SERVER_PORT) + 5];
+        
+        char *str_port = itoa(this->port);
+        strcpy(envp[4],HTML_SERVER_PORT);
+        strcat(envp[4],str_port);
+        delete [] str_port;
+        envp[5]=new char[(int)strlen(HTML_QUERY_STRING) + 1 + 
+                (int)strlen(this->request + 6 + offset)];
+        strcpy(envp[5],HTML_QUERY_STRING);
+        strcat(envp[5],this->request + 6 + offset);
+        envp[6]=NULL;
+        
+        execve(s.c_str(), argv, envp);
+        perror("execve() ");
+        exit(1);
+    }
+    wait(&status);
+    close(file_fd);
+    if(WIFEXITED(status)) {
+        if(WEXITSTATUS(status) == 0) {
+            file_fd = open(name.c_str(), O_RDONLY, 0644);
+            if (file_fd > 0) {
+                char buf[BUFF_SIZE];
+                int len = 0;
+                char* res = Response(200, "OK", false);
+                send(client_fd, res, strlen(res),0);
+                free(res);
+                while ((len = read(file_fd, &buf, BUFF_SIZE)))
+                    send(client_fd,buf,len,0);
+                close(file_fd);
+            } else {
+                string error = MSG_ERROR_OPEN_FILE + " " + name;
+                perror(error.c_str());
+                char* res = Response(500, "", true);
+                send(client_fd, res, strlen(res), 0);
+                free(res);
+                resp_file(client_fd, HTML_PATH_CGI_ERROR);
+            }
+        } else {
+            string error = MSG_CGI_PROCESS_FINISHED + " " + to_string(WEXITSTATUS(status));
+            perror(error.c_str());											
+            char* res = Response(500, "", true);
+            send(client_fd, res, strlen(res), 0);
+            free(res);
+            resp_file(client_fd, HTML_PATH_CGI_ERROR);
+        }
+    }
+    else if(WIFSIGNALED(status))
+    {
+        string error = MSG_FROM_CGI_PROCESS + " " + to_string(WIFSIGNALED(status));
+        perror(error.c_str());
+        char* res = Response(500, "", true);
+        send(client_fd, res, strlen(res), 0);
+        free(res);
+        resp_file(client_fd, HTML_PATH_CGI_ERROR);
+    }
+
+    chdir(PATH_FROM_BIN_TO_MODELES);
 }
 
 void Server::get_handle(int &client_fd)
 {
+    char path[BUFF_SIZE];
     bool is_home_page = true;
     int path_end_it = 5;
     while(this->request[path_end_it] != ' ')
         ++path_end_it;
 
-    char path[path_end_it - 3];
     if(path_end_it != 5) {
         is_home_page = false;
         copy(&(this->request[5]), &(this->request[path_end_it]), &path[0]);
@@ -82,23 +175,22 @@ void Server::get_handle(int &client_fd)
         path[1] = '\0';
     }
     
-    cout << MSG_REQUEST_PATH_PREFIX << path << endl;
+    cout << MSG_REQUEST_PATH_PREFIX + " " << path << endl;
     
-    if (is_cgi_format_request(path))
+    if (is_cgi_format_request(path)) {
         this->cgi_handler(client_fd, is_home_page, path);
+    }
     else {
         int file_fd;
         if (!is_home_page) {
             file_fd = open(path,O_RDONLY);
-        }
-        if (file_fd < 0) {
-            char* res = Response(404, "", true);
-            send(client_fd, res, strlen(res), 0);
-            free(res);
-            resp_file(client_fd, HTML_PATH_404);
+            if (file_fd < 0) {
+                char* res = Response(404, "", true);
+                send(client_fd, res, strlen(res), 0);
+                free(res);
+                resp_file(client_fd, HTML_PATH_404);
+            }
         } else {
-            char buf[BUFF_SIZE];
-            int len = 0;
             char* res = Response(200, "OK", false);
             send(client_fd, res, strlen(res),0);
             free(res);
