@@ -125,6 +125,8 @@ void SyntaxAnalyzer::declaration(IdentifierType identT) {
 			if (!lexeme.isConstant())
 				throw "Constant value expected. " + lexeme.getValue() + " is not a constant.";
 			else if (lexeme.equalTypes(identT)) {
+				checkEnv(lexeme);
+
 				lexeme.setValue(sign + lexeme.getValue());
 				(&(*identifier))->setValue(lexeme.getValue());
 				nextLexeme();
@@ -701,6 +703,23 @@ void SyntaxAnalyzer::insertBreakLabels(unsigned long startIndex, unsigned long e
 	for (unsigned long i = startIndex; i < endIndex; i++)
 		if (rpn[i].check(LexemeType::rpn_label, "-1"))
 			rpn[i].setValue(to_string(labelIndex));
+}
+
+void SyntaxAnalyzer::checkEnv(Lexeme &lexeme) {
+	if (lexeme.isString() && (lexeme.getValue()[0] == '$')) {
+		string raw_key = lexeme.getValue();
+		string key;
+
+		for (unsigned int i = 1; i < raw_key.size(); ++i) {
+			key += raw_key[i];
+		}
+
+		char *raw_value = getenv(key.c_str());
+		if (raw_value) {
+			string value(raw_value);
+			lexeme.setValue(value);
+		}
+	}
 }
 
 void SyntaxAnalyzer::printIdentifiers() const {

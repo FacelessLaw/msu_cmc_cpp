@@ -57,6 +57,10 @@ bool Lexeme::isDatatype() const {
 	return type == LexemeType::datatype_int || type == LexemeType::datatype_real || type == LexemeType::datatype_string || type == LexemeType::datatype_boolean;
 }
 
+bool Lexeme::isString() const {
+	return type == LexemeType::datatype_string || type == LexemeType::constant_string;
+}
+
 bool Lexeme::isComparison() const {
 	return type == LexemeType::delimeter && 
 		(value == LEX_EQUAL || value == LEX_NEQUAL || 

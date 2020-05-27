@@ -47,6 +47,7 @@ class SyntaxAnalyzer {
 	IdentifierType entity();
 
 	void insertBreakLabels(unsigned long startIndex, unsigned long endIndex, unsigned long labelIndex); // вставка флагов разрыва
+	void checkEnv(Lexeme &lexeme); // проверка на содержание переменной среды окружения
 
 	void parseIf(); // парсинг условоного оператора
 	void parseFor(); // парсинг цикла for

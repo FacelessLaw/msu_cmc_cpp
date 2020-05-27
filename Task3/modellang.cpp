@@ -144,6 +144,10 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	if (path.empty()) {
+		path = argv[0];
+	}
+
 	try {
 		ifstream sourceFile(path); // создаём файловый поток
 		LexicalAnalyzer lexicalAnalyzer = LexicalAnalyzer(sourceFile); // создаём лексический анализатор из файлового потока

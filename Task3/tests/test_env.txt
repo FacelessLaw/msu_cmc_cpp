@@ -1,0 +1,8 @@
+program {
+    string true_s = "$PATH";
+    string false_s = "$ABRACADABRA";
+
+    write(true_s);
+    write("\n");
+    write(false_s);
+}

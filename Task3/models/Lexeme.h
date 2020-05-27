@@ -25,6 +25,7 @@ public:
 
 	bool isConstant() const; // является ли лексема константой
 	bool isDatatype() const; // является ли лексема объявлением типа
+	bool isString() const; // является ли лексема строкой
 
 	bool isComparison() const; // является ли лексема символом сравнения
 	bool isAriphmeticOp() const; // является ли лексема арифметической операцией
