@@ -24,7 +24,7 @@ const char *HTML_QUERY_STRING = "QUERY_STRING=";
 
 const std::string HTML_PATH_MAIN = "src_html/main.html";
 const std::string HTML_PATH_404 = "src_html/errors/404_error.html";
-const std::string HTML_PATH_CGI_ERROR = "src_html/errors/CGI_error.html";
+const std::string HTML_PATH_CGI_ERROR = "src_html/CGI_error.html";
 
 const std::string MSG_SOCKET_CREATION_STR_ERROR = "Error with socket creation!\n";
 const std::string MSG_SOCKET_BINDING_STR_ERROR = "Error with socket bind establishment\n";
