@@ -1,0 +1,13 @@
+#!modelLang
+program {
+    string q_param = "$QUERY_STRING";
+    string r_addr = "$SERVER_PORT";
+    write("Content-type: text/html\n\n");
+
+    write("<html><body>");
+    write("Приветствую!\n Вы ввели аргументы: ");
+    write(q_param);
+    write(", на порт: ");
+    write(r_addr);
+    write("</body></html>");
+}

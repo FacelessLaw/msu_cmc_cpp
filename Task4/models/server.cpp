@@ -66,7 +66,7 @@ void Server::cgi_handler(int &client_fd, bool &is_home_page, char *path)
             s.erase(s.begin());
         
         close(tmp_fd);
-        char *argv[] = { (char*)processName.c_str(), NULL };
+        char *argv[] = { (char*)processName.c_str(), "-e", NULL,};
         
         int offset = search_char(this->request + 5, DELIMETER_QUESTION);
         
@@ -87,10 +87,18 @@ void Server::cgi_handler(int &client_fd, bool &is_home_page, char *path)
         strcpy(envp[4],HTML_SERVER_PORT);
         strcat(envp[4],str_port);
         delete [] str_port;
+
+        int end_of_query_offset = search_char(this->request + 5 + offset, ' ');
+        char query_params[end_of_query_offset + 1]; 
+        for (int i = 0; i < end_of_query_offset; ++i) {
+            query_params[i] = *(this->request + 6 + offset + i);
+        }
+        query_params[end_of_query_offset] = '\0';
+
         envp[5]=new char[(int)strlen(HTML_QUERY_STRING) + 1 + 
                 (int)strlen(this->request + 6 + offset)];
         strcpy(envp[5],HTML_QUERY_STRING);
-        strcat(envp[5],this->request + 6 + offset);
+        strcat(envp[5],query_params);
         envp[6]=NULL;
         
         execve(s.c_str(), argv, envp);
